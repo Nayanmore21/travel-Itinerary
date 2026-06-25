@@ -13,4 +13,5 @@ export const uploadDocuments = (files, onProgress) => {
 export const listDocuments = () => axiosClient.get('/upload/documents');
 export const getDocument = (id) => axiosClient.get(`/upload/documents/${id}`);
 export const deleteDocument = (id) => axiosClient.delete(`/upload/documents/${id}`);
-export const getFileUrl = (id) => `/api/upload/documents/${id}/file`;
+export const getFileUrl = (id) =>
+  `${import.meta.env.VITE_API_BASE_URL}/upload/documents/${id}/file`;
