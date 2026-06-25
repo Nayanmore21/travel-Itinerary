@@ -10,8 +10,23 @@ import errorMiddleware from './middleware/error.middleware.js';
 
 const app = express();
 
+const DEV_ORIGIN = 'http://localhost:5173';
+
+// CLIENT_ORIGIN can be a single URL or comma-separated list of URLs
+const allowedOrigins = (process.env.CLIENT_ORIGIN || DEV_ORIGIN)
+  .split(',')
+  .map((o) => o.trim());
+
 app.use(cors({
-  origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow server-to-server / curl (no origin header)
+    if (!origin) return callback(null, true);
+    // Allow exact matches
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow all Vercel preview deploy subdomains
+    if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+    callback(new Error(`CORS: origin ${origin} not allowed`));
+  },
   credentials: true,
 }));
 
